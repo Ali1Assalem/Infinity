@@ -6,7 +6,16 @@ connectToDb()
 
 const app = express();
 
-app.use(express.json())
+//Middleware
+// body - raw application/json
+app.use(express.json());
+
+// body  x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+
+//Routes
+app.use("/api/auth",require("./routes/authRoute"))
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT,()=> console.log(`server is running in ${process.env.MODE_ENV} mode on port ${PORT}`))
