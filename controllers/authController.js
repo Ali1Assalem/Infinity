@@ -78,8 +78,7 @@ const {User , validationRegisterUser , validationLoginUser} = require("../models
     });
   
     } catch (err) {
-      console.error("Unexpected error in registerUserCtrl:", err);
+      console.error("Unexpected error in loginUserCtrl:", err);
       return res.status(500).json({ message: "Internal server error" });
     }
   };
-  
