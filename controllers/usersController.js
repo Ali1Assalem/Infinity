@@ -100,7 +100,7 @@ const { cloudinaryUploadImage,cloudinaryRemoveImage } = require("../utils/cloudi
   * @methode  POST
   * @access   Private (only logged in user)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-module.exports.profilePhotoUploadCtrl = async (req, res) => {
+  module.exports.profilePhotoUploadCtrl = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No image file provided" });
@@ -142,6 +142,37 @@ module.exports.profilePhotoUploadCtrl = async (req, res) => {
 
   } catch (err) {
     console.error("Unexpected error in profilePhotoUploadCtrl:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+/**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  * @desc     Delete User Profile (Account)
+  * @router   /api/users/profile/:id
+  * @methode  DELETE
+  * @access   Private (only admin or user himself)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+  module.exports.deleteUserProfileCtrl = async (req, res) => {
+  try {
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.profilePhoto.publicId !== null) {
+      await cloudinaryRemoveImage(user.profilePhoto.publicId);
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+
+    return res.status(200).json({
+      message: "Your profile has been deleted",
+    });
+
+  } catch (err) {
+    console.error("Unexpected error in deleteUserProfileCtrl:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

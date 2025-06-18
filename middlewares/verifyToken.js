@@ -51,5 +51,27 @@ function verifyTokenAndUser(req, res, next) {
     });
 }
 
+function verifyTokenAndAuthorization(req, res, next) {
+    verifyToken(req, res, () => {
+        try {
+                            console.log(req.user._id +' '+req.params.id);
 
-module.exports = {verifyToken , verifyTokenAndAdmin ,verifyTokenAndUser}
+            if (req.user.id === req.params.id || req.user.isAdmin) {                
+                next();
+            } else {
+                return res.status(403).json({ message: "Not allowed, only user himself or admin" });
+            }
+        } catch (err) {
+            console.error("Error in verifyTokenAndUser:", err);
+            return res.status(500).json({ message: "server internal error" });
+        }
+    });
+}
+
+
+module.exports = {
+    verifyToken , 
+    verifyTokenAndAdmin ,
+    verifyTokenAndUser ,
+    verifyTokenAndAuthorization
+}
