@@ -34,4 +34,22 @@ function verifyTokenAndAdmin(req, res, next) {
 }
 
 
-module.exports = {verifyToken , verifyTokenAndAdmin}
+function verifyTokenAndUser(req, res, next) {
+    verifyToken(req, res, () => {
+        try {
+                            console.log(req.user._id +' '+req.params.id);
+
+            if (req.user.id === req.params.id) {                
+                next();
+            } else {
+                return res.status(403).json({ message: "Not allowed, only user himself" });
+            }
+        } catch (err) {
+            console.error("Error in verifyTokenAndUser:", err);
+            return res.status(500).json({ message: "server internal error" });
+        }
+    });
+}
+
+
+module.exports = {verifyToken , verifyTokenAndAdmin ,verifyTokenAndUser}
